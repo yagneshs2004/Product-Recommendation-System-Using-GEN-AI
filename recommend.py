@@ -10,19 +10,10 @@ from langchain.prompts import PromptTemplate
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 
-# Load environment variables from .env file
 load_dotenv()
 
 def process_data(refined_df):
-    """
-    Process the refined dataset and create the vector store.
-    
-    Args:
-        refined_df (pd.DataFrame): Preprocessed dataset DataFrame.
-        
-    Returns:
-        vectorstore (FAISS): Vector store containing the processed data.
-    """
+   
     refined_df['combined_info'] = refined_df.apply(lambda row: f"Product ID: {row['pid']}. Product URL: {row['product_url']}. Product Name: {row['product_name']}. Primary Category: {row['primary_category']}. Retail Price: ${row['retail_price']}. Discounted Price: ${row['discounted_price']}. Primary Image Link: {row['primary_image_link']}. Description: {row['description']}. Brand: {row['brand']}. Gender: {row['gender']}", axis=1)
 
     loader = DataFrameLoader(refined_df, page_content_column="combined_info")
@@ -37,36 +28,16 @@ def process_data(refined_df):
     return vectorstore
 
 def save_vectorstore(vectorstore, directory):
-    """
-    Save the vector store to a directory.
-    
-    Args:
-        vectorstore (FAISS): Vector store to be saved.
-        directory (str): Directory to save the vector store.
-    """
+  
     vectorstore.save_local(directory)
 
 def load_vectorstore(directory, embeddings):
-    """
-    Load the vector store from a directory.
-    
-    Args:
-        directory (str): Directory containing the saved vector store.
-        embeddings (OpenAIEmbeddings): Embeddings object.
-        
-    Returns:
-        vectorstore (FAISS): Loaded vector store.
-    """
+  
     vectorstore = FAISS.load_local(directory, embeddings, allow_dangerous_deserialization = True  )
     return vectorstore
 
 def display_product_recommendation(refined_df):
-    """
-    Display product recommendation section.
-    
-    Args:
-        refined_df (pd.DataFrame): Preprocessed dataset DataFrame.
-    """
+  
     st.header("Product Recommendation")
 
     vectorstore_dir = 'vectorstore'
@@ -87,10 +58,10 @@ def display_product_recommendation(refined_df):
     Product Brand: {brand},
     Maximum Price range: {price}.
 
-    Please provide complete answers including product department name, product category, product name, price, and stock quantity.
+    Please provide complete answers, including product department name, product category, product name, price, and stock quantity.
     """
     prompt_manual = PromptTemplate(
-        input_variables=["department", "category", "brand", "price"],
+        input_variables = ["department", "category", "brand", "price"],
         template=manual_template,
     )
 
